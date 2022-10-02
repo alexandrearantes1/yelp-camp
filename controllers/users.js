@@ -1,8 +1,6 @@
 const User = require('../models/user');
 
 module.exports.renderRegisterForm = (req, res) => {
-    console.log(`router.get('/register'): ${req.session.id}`)
-    console.log(`req.session.returnTo - /register - get: ${req.session.returnTo}`)
     res.render('users/register');
 }
 

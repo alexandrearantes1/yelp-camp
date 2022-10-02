@@ -1,0 +1,26 @@
+#cluster-map {
+    width: 100%; 
+    height: 500px;
+    border: 1px solid #bfc2bf;
+}
+
+#map {
+    width: 100%; 
+    height: 424px;
+    margin-bottom:30px;
+    border: 1px solid #bfc2bf;
+}
+
+.mapboxgl-popup-content {
+    max-width: 500px;
+    width: 450px;
+    height: 170px;
+    max-height: 170px;
+    padding-bottom:10px;
+    border:1px solid rgb(194, 194, 194);
+}
+
+.mapboxgl-popup-content h5 {
+    font-size: 1.2em;
+    text-align:center;
+}

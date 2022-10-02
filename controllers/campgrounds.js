@@ -24,7 +24,6 @@ module.exports.createCampground = async (req, res, next) => {
     campground.images = req.files.map(f => ({ url: f.path, filename:f.filename }))
     campground.author = req.user._id;
     await campground.save();
-    console.log(campground);
     req.flash('success', 'Successfully created a new campground');
     res.redirect(`/campgrounds/${campground._id}`);
 }
@@ -54,8 +53,12 @@ module.exports.renderEditForm = async (req, res, next) => {
 
 module.exports.updateCampground = async (req, res, next)  => {
     const { id } = req.params;
-    console.log(req.body);
+    const geoData = await geocoder.forwardGeocode({
+        query:req.body.campground.location,
+        limit:1
+    }).send();
     const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground});
+    campground.geometry = geoData.body.features[0].geometry;
     const imgs = req.files.map(f => ({ url: f.path, filename:f.filename }));
     campground.images.push(...imgs);
     await campground.save();

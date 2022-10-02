@@ -7,12 +7,16 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css" rel="stylesheet">
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>  
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
+    
+    <link rel="stylesheet" href="/stylesheets/maps.css">
+    <link rel="stylesheet" href="/stylesheets/campgrounds.css">
     <title>YelpCamp</title>
 </head>
 <body class="d-flex flex-column vh-100">
+    
     <%- include('../partials/navbar') %>
-    <main class="container mt-5">
+    <main class="container mt-4">
         <%- include('../partials/flash') %>
         <%- body %>
     </main>

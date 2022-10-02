@@ -14,14 +14,12 @@ const passport           = require('passport');
 const LocalStrategy      = require('passport-local');
 const User               = require('./models/user');
 const cookieParser       = require('cookie-parser');
-
+const mongoSanitize      = require('express-mongo-sanitize');
+const helmet             = require('helmet');
 
 const campgroundRoutes   = require('./routes/campgrounds');
 const reviewsRoutes      = require('./routes/reviews');
 const userRoutes         = require('./routes/users');
-
-const MongoStore = require("connect-mongo");
-
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
@@ -46,24 +44,31 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 const sessionConfig = {
+    name: 'session',
     secret: 'mysecret',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        maxAge:   Date.now() + 1000 * 60 * 60 * 24 * 7,
-        expires:  Date.now() + 1000 * 60 * 60 * 24 * 7
+        // secure:true, // cookies can only be used over https connections.
+        expires:  Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge:   1000 * 60 * 60 * 24 * 7
     }
 }
 app.use(session(sessionConfig));
 app.use(flash());
+
+
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
+app.use(mongoSanitize({replaceWith:'_'}));
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
 
 app.use((req, res, next) => {
     res.locals.currentUser = req.user;

@@ -7,6 +7,7 @@ module.exports.createReview = async (req, res, next) => {
     review.author = req.user._id;
     campground.reviews.push(review);
     await review.save();
+    campground.rating = await campground.calculateRating();
     await campground.save();
     req.flash('success', 'Review saved successfully');
     res.redirect(`/campgrounds/${campground._id}`);
