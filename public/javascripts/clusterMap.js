@@ -4,8 +4,8 @@ const map = new mapboxgl.Map({
     container: 'cluster-map',
     // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
     style: 'mapbox://styles/mapbox/light-v10',
-    center: [-103.5917, 40.6699],
-    zoom: 3
+    center: [-6.5, 53.5],
+    zoom: 5
 });
 
 map.on('load', () => {
