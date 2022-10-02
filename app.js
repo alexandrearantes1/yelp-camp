@@ -2,26 +2,33 @@ if(process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
 
-const express            = require('express');
 const path               = require('path');
 const mongoose           = require('mongoose');
 const methodOverride     = require('method-override');
-const ejsMate            = require('ejs-mate');
-const ExpressError       = require('./utils/ExpressError');
+
+const express            = require('express');
 const session            = require('express-session');
+const MongoDBStore       = require ('connect-mongo');
+const mongoSanitize      = require('express-mongo-sanitize');
+const helmet             = require('helmet');
+const ejsMate            = require('ejs-mate');
+
 const flash              = require('connect-flash');  
 const passport           = require('passport');
 const LocalStrategy      = require('passport-local');
 const User               = require('./models/user');
 const cookieParser       = require('cookie-parser');
-const mongoSanitize      = require('express-mongo-sanitize');
-const helmet             = require('helmet');
+
+const ExpressError       = require('./utils/ExpressError');
 
 const campgroundRoutes   = require('./routes/campgrounds');
 const reviewsRoutes      = require('./routes/reviews');
 const userRoutes         = require('./routes/users');
+const MongoStore = require('connect-mongo');
 
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp'
+
+mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -43,9 +50,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+const secret = process.env.SECRET || 'thisshouldbeabettersecret';
+
+const store = new MongoStore({
+    mongoUrl: dbUrl,
+    secret,
+    touchAfter: 24 * 3600 // time period in seconds.
+});
+
+store.on('error', function (e) {
+    console.log('Session Store Error: ', e);
+})
+
 const sessionConfig = {
+    store,
     name: 'session',
-    secret: 'mysecret',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -58,8 +78,50 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 app.use(flash());
 
-
-
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://api.mapbox.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net",
+];
+const styleSrcUrls = [
+    "https://cdn.jsdelivr.net/",
+    "https://kit-free.fontawesome.com/",
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.mapbox.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/",
+];
+const connectSrcUrls = [
+    "https://api.mapbox.com/",
+    "https://a.tiles.mapbox.com/",
+    "https://b.tiles.mapbox.com/",
+    "https://events.mapbox.com/",
+];
+const fontSrcUrls = [];
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            workerSrc: ["'self'", "blob:"],
+            objectSrc: [],
+            imgSrc: [
+                "'self'",
+                "blob:",
+                "data:",
+                "https://res.cloudinary.com/dguk8rvgh/",
+                "https://images.unsplash.com/",
+            ],
+            fontSrc: ["'self'", ...fontSrcUrls],
+        },
+    })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
