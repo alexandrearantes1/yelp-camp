@@ -16,13 +16,19 @@
                 </a>
                 </div>
                 
-                <div class="col-md-8 pt-3">
+                <div class="col-md-8 p-3 ">
                     <h5 class="card-title"><a href="/campgrounds/<%= campground._id %>"><%= campground.title %></a></h5>
-                    <p class="card-text"><a href="/campgrounds/<%= campground._id %>"><%= campground.description %></a></p>
+                    <p class="card-text d-none d-md-block"><a href="/campgrounds/<%= campground._id %>"><%= campground.description %></a></p>
                     <p class="card-text">
                         <small class="text-muted"><%= campground.location %></small>
                     </p>
-                    Reviews <%= campground.averageReviewValue %>
+                    <% if(campground.rating) { %> 
+                        <p><h5>Rating: <%= Math.round(campground.rating * 10) / 10 %></h5>
+                            <p class="starability-result" data-rating="<%= Math.round(campground.rating) %>">
+                                Rated: 3 stars
+                            </p>
+                        </p>
+                      <% } %>
                 </div>
             </div>
         </div>

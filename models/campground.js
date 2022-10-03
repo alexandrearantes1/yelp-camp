@@ -14,7 +14,7 @@ ImageSchema.virtual('thumbnail').get(function () {
 });
 
 ImageSchema.virtual('large_thumbnail').get(function () {
-    return this.url.replace('/upload', '/upload/ar_1.0,c_fill,g_center,w_415,h_311');
+    return this.url.replace('/upload', '/upload/ar_1.0,c_fill,g_center,w_516,h_311');
 });
 
 ImageSchema.virtual('carousel_image').get(function () {
@@ -71,7 +71,7 @@ CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
                 </div>
                 <ul class="list-group list-group-flush">
                 <li class="list-group-item text-muted">${this.location}</li>
-                <li class="list-group-item">$${this.price} / night</li>
+                <li class="list-group-item">&euro;${this.price.toFixed(2)} / night</li>
                 </ul>
             </div>
         </div>

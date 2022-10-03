@@ -1,9 +1,14 @@
 const mongoose = require('mongoose');
 const Campground = require('../models/campground')
-const cities = require('./cities');
+const Review = require('../models/review');
+const User = require('../models/user');
+
+const cities = JSON.parse(JSON.stringify(require('./irishCities')));
 const {places, descriptors} = require('./seedHelpers');
 
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+const dbUrl =  process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp'
+
+mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -124,25 +129,45 @@ const sample = array => array[Math.floor(Math.random()* array.length)];
 
 const seedDB = async () => {
     await Campground.deleteMany({});
-    
-    for (let i = 0; i < 300; i++) {
+    await Review.deleteMany({});
+    const lorem = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo sunt ipsum fugit quo. Reiciendis corrupti nemo omnis cumque ex, recusandae provident, ab cupiditate voluptates, quibusdam quidem dolor officia? Repudiandae, voluptates.';
+    for (let i = 0; i < 90; i++) {
         const random1000 = Math.floor(Math.random()*1000);
         const price = Math.floor(Math.random() * 20) + 10;
         const arraySize = images.length;
+        const numImgs = Math.floor(Math.random() * 15) + 4;
+        const imgs = [];
+        const reviews = [];
+        const users = await User.find();
+        
+        for (let i = 0; i < numImgs; i++) {
+          imgs.push(images[Math.floor(Math.random() * arraySize)]);
+          const review = new Review({ 
+                                body:lorem, 
+                                rating:Math.floor(Math.random() * 5) + 1
+                               });
+          
+          review.author = users[Math.floor(Math.random() * users.length)]._id;
+          review.date = Date.now();
+          await review.save();
+          reviews.push(review._id);
+        }
         const camp = new Campground({
-            author: '633301b2a30b1389e4fbc2f6',
-            location: `${cities[random1000].city}, ${cities[random1000].state}`,
+            author: users[Math.floor(Math.random() * users.length)]._id,
+            location: `${cities[random1000].city}, ${cities[random1000].province}`,
             title: `${sample(descriptors)} ${sample(places)}`,
-            description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo sunt ipsum fugit quo. Reiciendis corrupti nemo omnis cumque ex, recusandae provident, ab cupiditate voluptates, quibusdam quidem dolor officia? Repudiandae, voluptates.',
+            description: lorem,
             price: price,
-            images: images[Math.floor(Math.random() * arraySize)],
+            images:imgs,
             geometry: { 
               type: 'Point', 
               coordinates: [
                   cities[random1000].longitude,
                   cities[random1000].latitude
-              ]}
+              ]},
+            reviews
         })
+        camp.rating = await camp.calculateRating();
         await camp.save();
     }
 }

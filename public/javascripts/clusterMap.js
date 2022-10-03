@@ -36,11 +36,11 @@ map.on('load', () => {
             'circle-color': [
                 'step',
                 ['get', 'point_count'],
-                '#00E5FF',
-                8,
-                '#4DD0E1',
-                15,
-                '#0097A7'
+                '#92e6a7',
+                4,
+                '#2dc653',
+                9,
+                '#208b3a'
             ],
             'circle-radius': [
                 'step',
@@ -72,7 +72,7 @@ map.on('load', () => {
         source: 'campgrounds',
         filter: ['!', ['has', 'point_count']],
         paint: {
-            'circle-color': '#11b4da',
+            'circle-color': '#25a244',
             'circle-radius': 4,
             'circle-stroke-width': 1,
             'circle-stroke-color': '#fff'
