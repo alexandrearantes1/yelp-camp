@@ -42,12 +42,15 @@ db.once("open", () => {
     console.log("Database connected");
 });
 
-const key = fs.readFileSync('./key.pem');
-const cert = fs.readFileSync('./certificate.pem');
-
 const app = express();
 
-const server = https.createServer({key: key, cert: cert }, app);
+console.log(process.env.NODE_ENV);
+
+
+// const key = fs.readFileSync('./key.pem');
+// const cert = fs.readFileSync('./certificate.pem');
+// const server = https.createServer({key: key, cert: cert }, app);
+
 
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
@@ -166,6 +169,13 @@ app.use((err, req, res, next) => {
 
 const port = process.env.PORT || 80;
 
-server.listen(port, () => {
+
+
+//     server.listen(port, () => {
+//         console.log(`Serving on port ${ port }`);
+//     });
+
+
+app.listen(port, () => {
     console.log(`Serving on port ${ port }`);
 });
