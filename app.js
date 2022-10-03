@@ -2,6 +2,8 @@ if(process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
 
+const fs                 = require('fs')
+const https              = require('https');
 const path               = require('path');
 const mongoose           = require('mongoose');
 const methodOverride     = require('method-override');
@@ -40,7 +42,12 @@ db.once("open", () => {
     console.log("Database connected");
 });
 
+const key = fs.readFileSync('./key.pem');
+const cert = fs.readFileSync('./certificate.pem');
+
 const app = express();
+
+const server = https.createServer({key: key, cert: cert }, app);
 
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
@@ -52,7 +59,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const secret = process.env.SECRET || 'thisshouldbeabettersecret';
 
-const store = new MongoStore({
+const store = new MongoDBStore({
     mongoUrl: dbUrl,
     secret,
     touchAfter: 24 * 3600 // time period in seconds.
@@ -105,12 +112,12 @@ const fontSrcUrls = [];
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
-            defaultSrc: [],
+            defaultSrc: ["blob:", ...scriptSrcUrls, ...styleSrcUrls, ...connectSrcUrls],
             connectSrc: ["'self'", ...connectSrcUrls],
-            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
-            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls, ...styleSrcUrls, ...connectSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...scriptSrcUrls, ...styleSrcUrls, ...connectSrcUrls],
             workerSrc: ["'self'", "blob:"],
-            objectSrc: [],
+            objectSrc: ["blob:", ...scriptSrcUrls, ...styleSrcUrls, ...connectSrcUrls],
             imgSrc: [
                 "'self'",
                 "blob:",
@@ -157,8 +164,8 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', { err });
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 80;
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Serving on port ${ port }`);
 });
