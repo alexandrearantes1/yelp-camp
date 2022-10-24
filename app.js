@@ -60,7 +60,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const secret = process.env.SECRET || 'thisshouldbeabettersecret';
 
-const store = new MongoDBStore({
+const store = MongoStore.create({
     mongoUrl: dbUrl,
     secret,
     touchAfter: 24 * 3600 // time period in seconds.
@@ -175,5 +175,5 @@ const port = process.env.PORT || 80;
 
 
 app.listen(port, () => {
-    console.log(`Serving on port ${ port }`);
+    console.log(`Serving at http://localhost:${ port }`);
 });

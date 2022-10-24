@@ -9,9 +9,9 @@
                 <div class="col-md-4">
                     <a href="/campgrounds/<%= campground._id %>" class="">
                     <% if (campground.images.length) { %> 
-                        <img class="img-fluid" src="<%= campground.images[0].large_thumbnail %>" alt="">
+                        <img class="img-fluid" src="<%= campground.images[0].large_thumbnail %>" alt="" crossorigin>
                     <% } else { %> 
-                        <img class="img-fluid" src="" alt="">
+                        <img class="img-fluid" src="" alt="" crossorigin>
                     <% } %> 
                 </a>
                 </div>

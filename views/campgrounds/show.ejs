@@ -81,6 +81,8 @@
           <button class="btn btn-success float-end">Save</button>
         </div>
       </form>
+      <% } else { %>
+        <a href="/login?returnTo=/campgrounds/<%=campground._id%>" class="btn btn-lg btn-primary mb-4">Leave a Review</a>
       <% } %> 
       <% for (let review of campground.reviews) { %> 
         <div class="card mb-3">
@@ -105,10 +107,10 @@
             <form class="d-flex justify-content-end" action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
               <button class="btn btn-sm btn-danger">Delete</button>
             </form>
-            <% } %> 
+          <% } %> 
           </div>
         </div>
-      <% } %>
+        <% } %> 
     </div>
 </div>
 <script>

@@ -24,12 +24,16 @@ module.exports.createUser = async (req, res, next) => {
 }
 
 module.exports.renderLoginForm = (req, res) => {
+    if(req.query.returnTo) {
+        req.session.returnTo = req.query.returnTo;
+    }
     res.render('users/login');
 }
 
 module.exports.loginUser = (req, res) => {
-    req.flash('success', 'welcome back');
-    const redirectUrl = req.cookies.returnTo || '/campgrounds'
+    req.flash('success', `Welcome back, ${req.session.passport.user}!`);
+    console.dir(req);
+    const redirectUrl = res.locals.returnTo || '/campgrounds'
     res.redirect(redirectUrl);
 }
 

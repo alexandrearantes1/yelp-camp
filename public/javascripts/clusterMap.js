@@ -113,6 +113,13 @@ map.on('load', () => {
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
     
+    map.on('movestart', () => {
+    })
+        
+    map.on('moveend', () => {
+        const features = map.queryRenderedFeatures({ layers: ['clusters'] });
+        console.log(features);
+    })
     
     new mapboxgl.Popup()
         .setLngLat(coordinates)
