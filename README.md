@@ -4,6 +4,8 @@ The YelpCamp is a fictitional yelp-like website for rating camping sites.
 
 This website was developed during The Web Developer Bootcamp course by Colt Steele, and while it's layout and functionality is based on the course's web app, I have implemented some additional features to improve user's and site administrator experience.
 
+![Responsive Mockup](https://yelp-camp-ireland-f3576c498663.herokuapp.com/images/desktop.png)
+
 
 ## Project Goals
 
